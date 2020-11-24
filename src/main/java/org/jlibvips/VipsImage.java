@@ -389,6 +389,21 @@ public class VipsImage implements Closeable {
     }
 
     /**
+     * Write an image to a file in TIFF format.
+     *
+     * <code>
+     *     java.nio.Path path = image.tiff().save();
+     * </code>
+     *
+     * <a href="http://libvips.github.io/libvips/API/current/VipsForeignSave.html#vips-tiffsave">vips_tiffsave()</a>
+     *
+     * @return the {@link TiffSaveOperation}
+     */
+    public TiffSaveOperation tiff() {
+        return new TiffSaveOperation(this);
+    }
+
+    /**
      * Get the width of this image.
      *
      * @return width in pixel

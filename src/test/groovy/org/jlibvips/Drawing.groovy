@@ -4,7 +4,6 @@ package org.jlibvips
 import spock.lang.Specification
 
 import java.nio.file.Files
-import java.nio.file.Paths
 import java.nio.file.StandardCopyOption
 
 import static org.jlibvips.TestUtils.copyResourceToFS
@@ -65,6 +64,7 @@ class Drawing extends Specification {
         def image = VipsImage.fromFile imagePath
         def whiteRgb = color(255, 255, 255)
         def transparent = color(0, 0, 0, 0)
+        def dir = Files.createTempDirectory("tint")
         when:
         def lut = VipsImage.identity().create()
         lut = lut.moreEq(200).ifthenelse(lut.newFromImage(transparent), lut.newFromImage(tint))
@@ -77,7 +77,7 @@ class Drawing extends Specification {
         then:
         tinted != null
         println tinted
-        def dest = Paths.get("/Volumes/HD/backups/images/${colorName}.png")
+        def dest = dir.resolve( "${colorName}.png")
         Files.move(tinted.png().save(), dest, StandardCopyOption.REPLACE_EXISTING)
         cleanup:
         Files.deleteIfExists imagePath

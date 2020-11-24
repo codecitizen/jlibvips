@@ -18,9 +18,18 @@ public class VipsBindingsSingleton {
             if(libraryPath == null || libraryPath.isEmpty()) {
                 throw new IllegalStateException("Please call VipsBindingsSingleton.configure(...) before getting the instance.");
             }
-            INSTANCE = Native.load(libraryPath, VipsBindings.class);
+            try {
+                INSTANCE = Native.load(libraryPath, VipsBindings.class);
+            } catch (UnsatisfiedLinkError e) {
+                libraryPath = guessPath();
+                INSTANCE = Native.load(libraryPath, VipsBindings.class);
+            }
         }
         return INSTANCE;
+    }
+
+    private static String guessPath() {
+        return "/usr/local/Cellar/vips/8.10.2_4/lib/libvips.dylib";
     }
 
     private VipsBindingsSingleton() {
