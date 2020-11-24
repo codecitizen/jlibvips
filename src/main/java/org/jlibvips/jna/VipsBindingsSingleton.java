@@ -4,8 +4,8 @@ import com.sun.jna.Native;
 
 public class VipsBindingsSingleton {
 
-
-    private static String libraryPath = "vips";
+    private static final String ENV_LIB_PATH = "JLIBVIPS_LIB_PATH";
+    private static String libraryPath = System.getenv(ENV_LIB_PATH) == null ? "vips" : System.getenv(ENV_LIB_PATH);
 
     public static void configure(String lp) {
         libraryPath = lp;
@@ -16,20 +16,15 @@ public class VipsBindingsSingleton {
     public static VipsBindings instance() {
         if(INSTANCE == null) {
             if(libraryPath == null || libraryPath.isEmpty()) {
-                throw new IllegalStateException("Please call VipsBindingsSingleton.configure(...) before getting the instance.");
+                throw new IllegalStateException("Please call VipsBindingsSingleton.configure(...) or set env var JLIBVIPS_LIB_PATH before getting the instance.");
             }
             try {
                 INSTANCE = Native.load(libraryPath, VipsBindings.class);
             } catch (UnsatisfiedLinkError e) {
-                libraryPath = guessPath();
-                INSTANCE = Native.load(libraryPath, VipsBindings.class);
+                throw new IllegalStateException("Please call VipsBindingsSingleton.configure(...) or set env var JLIBVIPS_LIB_PATH before getting the instance.");
             }
         }
         return INSTANCE;
-    }
-
-    private static String guessPath() {
-        return "/usr/local/Cellar/vips/8.10.2_4/lib/libvips.dylib";
     }
 
     private VipsBindingsSingleton() {

@@ -18,14 +18,15 @@ implementation 'io.github.codecitizen:jlibvips:1.3.0.RELEASE'
 
 **Configure Path to libvips Library:**
 
+From code:
 ```java
 VipsBindingsSingleton.configure("/usr/local/lib/libvips.so");
 ```
 
-On MacOS you can install `brew install vips` and refer to something like:
-
-```java
-VipsBindingsSingleton.configure("/usr/local/Cellar/glib/2.66.2_1/lib/libglib-2.0.0.dylib");
+You may also set the lib path in environment variable `JLIBVIPS_LIB_PATH`, which is useful 
+when running your app in multiple environments where lib position changes. Example for macOS:
+```shell script
+export JLIBVIPS_LIB_PATH="/usr/local/Cellar/vips/8.10.2_4/lib/libvips.dylib"
 ```
 
 **Example: Generate a Thumbnail for a PDF.**
@@ -169,3 +170,5 @@ VIPS[G_LOG_LEVEL_INFO]: gaussblur mask width 17
 VIPS[G_LOG_LEVEL_INFO]: convi: using C path
 VIPS[G_LOG_LEVEL_INFO]: convi: using C path
 ```
+
+The GLIBC lib path can also be set using env variable `JLIBVIPS_GLIBC_PATH`.
