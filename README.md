@@ -8,18 +8,24 @@ A Java interface to [llibvips](http://libvips.github.io/libvips/), the fast imag
 <dependency>
   <groupId>io.github.codecitizen</groupId>
   <artifactId>jlibvips</artifactId>
-  <version>1.2.1</version>
+  <version>1.3.0.RELEASE</version>
 </dependency>
 ```
 
 ```groovy
-implementation 'io.github.codecitizen:jlibvips:1.2.1'
+implementation 'io.github.codecitizen:jlibvips:1.3.0.RELEASE'
 ```
 
 **Configure Path to libvips Library:**
 
 ```java
 VipsBindingsSingleton.configure("/usr/local/lib/libvips.so");
+```
+
+On MacOS you can install `brew install vips` and refer to something like:
+
+```java
+VipsBindingsSingleton.configure("/usr/local/Cellar/glib/2.66.2_1/lib/libglib-2.0.0.dylib");
 ```
 
 **Example: Generate a Thumbnail for a PDF.**
@@ -52,7 +58,7 @@ public class PDFThumbnailExample {
 }
 ```
 
-**Example: Create an Image Pyramid form a large PNG File.**
+**Example: Create a DZ Image Pyramid from a large PNG File.**
 
 
 ```java
@@ -64,7 +70,7 @@ import java.nio.file.Paths;
 public class ImagePyramidExample {
     
     public static void main(String[] args) {
-        var image = VipsImage.formFile(Paths.get(args[0]));
+        var image = VipsImage.fromFile(Paths.get(args[0]));
         var directory = Files.createTempDirectory("example-pyramid");
         image.deepZoom(directory)
             .layout(DeepZoomLayouts.Google)
@@ -72,7 +78,36 @@ public class ImagePyramidExample {
             .suffix(".jpg[Q=100]")
             .save();
         image.unref();
-        System.out.printf("Pyramid generated in folder '%s'.%n", directory.toString());
+        System.out.printf("Pyramid generated in folder '%s'.\n", directory.toString());
+        System.out.println("Done.");
+    }
+    
+}
+```
+
+**Example: Create a TIFF Image Pyramid from a large PNG File.**
+
+```java
+package jlibvips.example;
+
+import org.jlibvips.VipsImage;
+import java.nio.file.Paths;
+
+public class ImagePyramidExample {
+    
+    public static void main(String[] args) {
+        var image = VipsImage.fromFile(Paths.get(args[0]));
+        Path dest = image
+                .tiff()
+                .tile(true)
+                .tileHeight(256)
+                .tileWidth(256)
+                .compression(VipsForeignTiffCompression.VIPS_FOREIGN_TIFF_COMPRESSION_JPEG)
+                .quality(80)
+                .pyramid(true)
+                .save();
+        image.unref();
+        System.out.printf("Pyramid generated in file '%s'.\n", dest.toString());
         System.out.println("Done.");
     }
     
