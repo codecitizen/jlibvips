@@ -10,16 +10,16 @@ public class GLibBindingsSingleton {
           : System.getenv(ENV_GLIBC_PATH);
 
   public static void configure(String lp) {
-      libraryPath = lp;
+    libraryPath = lp;
   }
 
   private static GLibBindings INSTANCE;
 
   public static GLibBindings instance() {
-      if(INSTANCE == null) {
-          INSTANCE = Native.load(libraryPath, GLibBindings.class);
-      }
-      return INSTANCE;
+    if(INSTANCE == null) {
+      INSTANCE = Native.load(libraryPath, GLibBindings.class);
+    }
+    return INSTANCE;
   }
 
   private GLibBindingsSingleton() {
