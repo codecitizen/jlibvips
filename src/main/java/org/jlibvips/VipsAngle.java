@@ -26,7 +26,7 @@ public enum VipsAngle {
             case 180: return D180;
             case 270: return D270;
             default:
-                throw new IllegalArgumentException("Allowed VipsAngle's are [0°, 90°, 180°, 270°].");
+                throw new IllegalArgumentException("Allowed VipsAngle's are [0, 90, 180, 270].");
         }
     }
 

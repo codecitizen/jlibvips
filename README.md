@@ -8,18 +8,25 @@ A Java interface to [llibvips](http://libvips.github.io/libvips/), the fast imag
 <dependency>
   <groupId>io.github.codecitizen</groupId>
   <artifactId>jlibvips</artifactId>
-  <version>1.2.1</version>
+  <version>1.3.0.RELEASE</version>
 </dependency>
 ```
 
 ```groovy
-implementation 'io.github.codecitizen:jlibvips:1.2.1'
+implementation 'io.github.codecitizen:jlibvips:1.3.0.RELEASE'
 ```
 
 **Configure Path to libvips Library:**
 
+From code:
 ```java
 VipsBindingsSingleton.configure("/usr/local/lib/libvips.so");
+```
+
+You may also set the lib path in environment variable `JLIBVIPS_LIB_PATH`, which is useful 
+when running your app in multiple environments where lib position changes. Example for macOS:
+```shell script
+export JLIBVIPS_LIB_PATH="/usr/local/Cellar/vips/8.10.2_4/lib/libvips.dylib"
 ```
 
 **Example: Generate a Thumbnail for a PDF.**
@@ -52,7 +59,7 @@ public class PDFThumbnailExample {
 }
 ```
 
-**Example: Create an Image Pyramid form a large PNG File.**
+**Example: Create a DZ Image Pyramid from a large PNG File.**
 
 
 ```java
@@ -64,7 +71,7 @@ import java.nio.file.Paths;
 public class ImagePyramidExample {
     
     public static void main(String[] args) {
-        var image = VipsImage.formFile(Paths.get(args[0]));
+        var image = VipsImage.fromFile(Paths.get(args[0]));
         var directory = Files.createTempDirectory("example-pyramid");
         image.deepZoom(directory)
             .layout(DeepZoomLayouts.Google)
@@ -72,7 +79,36 @@ public class ImagePyramidExample {
             .suffix(".jpg[Q=100]")
             .save();
         image.unref();
-        System.out.printf("Pyramid generated in folder '%s'.%n", directory.toString());
+        System.out.printf("Pyramid generated in folder '%s'.\n", directory.toString());
+        System.out.println("Done.");
+    }
+    
+}
+```
+
+**Example: Create a TIFF Image Pyramid from a large PNG File.**
+
+```java
+package jlibvips.example;
+
+import org.jlibvips.VipsImage;
+import java.nio.file.Paths;
+
+public class ImagePyramidExample {
+    
+    public static void main(String[] args) {
+        var image = VipsImage.fromFile(Paths.get(args[0]));
+        Path dest = image
+                .tiff()
+                .tile(true)
+                .tileHeight(256)
+                .tileWidth(256)
+                .compression(VipsForeignTiffCompression.VIPS_FOREIGN_TIFF_COMPRESSION_JPEG)
+                .quality(80)
+                .pyramid(true)
+                .save();
+        image.unref();
+        System.out.printf("Pyramid generated in file '%s'.\n", dest.toString());
         System.out.println("Done.");
     }
     
@@ -134,3 +170,5 @@ VIPS[G_LOG_LEVEL_INFO]: gaussblur mask width 17
 VIPS[G_LOG_LEVEL_INFO]: convi: using C path
 VIPS[G_LOG_LEVEL_INFO]: convi: using C path
 ```
+
+The GLIBC lib path can also be set using env variable `JLIBVIPS_GLIBC_PATH`.

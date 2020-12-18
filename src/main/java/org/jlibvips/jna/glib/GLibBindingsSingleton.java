@@ -4,7 +4,10 @@ import com.sun.jna.Native;
 
 public class GLibBindingsSingleton {
 
-  private static String libraryPath = "/usr/local/opt/glib/lib/libglib-2.0.dylib";
+  private static final String ENV_GLIBC_PATH = "JLIBVIPS_GLIBC_PATH";
+  private static String libraryPath = System.getenv(ENV_GLIBC_PATH) == null
+        ? "libglib-2.0"
+        : System.getenv(ENV_GLIBC_PATH);
 
   public static void configure(String lp) {
     libraryPath = lp;
