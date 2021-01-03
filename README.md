@@ -34,7 +34,7 @@ import java.nio.file.Files;
 public class PDFThumbnailExample {
     
     public static void main(String[] args) {
-        var image = VipsImage.formPdf(Paths.get(args[0]), 0); // Second Parameter is the Page Number
+        var image = VipsImage.fromPdf(Paths.get(args[0]), 0); // Second Parameter is the Page Number
         var thumbnail = image.thumbnail()
             .autoRotate()
             .create();
@@ -52,7 +52,7 @@ public class PDFThumbnailExample {
 }
 ```
 
-**Example: Create an Image Pyramid form a large PNG File.**
+**Example: Create an Image Pyramid from a large PNG File.**
 
 
 ```java
@@ -64,7 +64,7 @@ import java.nio.file.Paths;
 public class ImagePyramidExample {
     
     public static void main(String[] args) {
-        var image = VipsImage.formFile(Paths.get(args[0]));
+        var image = VipsImage.fromFile(Paths.get(args[0]));
         var directory = Files.createTempDirectory("example-pyramid");
         image.deepZoom(directory)
             .layout(DeepZoomLayouts.Google)
@@ -98,7 +98,7 @@ public class LoggingExample {
                     GLogLevelFlags.G_LOG_LEVEL_DEBUG),
             (flag, message) -> System.out.printf("VIPS[%s]: %s", flag, message)
     );
-    var image = VipsImage.formPdf(Paths.get(args[0]), 0); // Second Parameter is the Page Number
+    var image = VipsImage.fromPdf(Paths.get(args[0]), 0); // Second Parameter is the Page Number
     var thumbnail = image.thumbnail()
         .autoRotate()
         .create();
